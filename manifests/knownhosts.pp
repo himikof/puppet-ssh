@@ -1,5 +1,7 @@
-class ssh::knownhosts {
-    Sshkey <<| |>> {
-        ensure => present,
+class ssh::knownhosts ($use_exports) {
+    if $use_exports {
+        Sshkey <<| |>> {
+            ensure => present,
+        }
     }
 }
