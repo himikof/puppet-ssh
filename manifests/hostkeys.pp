@@ -1,15 +1,17 @@
-class ssh::hostkeys ($use_exports) {
+class ssh::hostkeys ($exchange_keys) {
 
-    if $use_exports {
-        @@sshkey { "${fqdn}_dsa":
-            host_aliases => [ "$fqdn", "$hostname", "$ipaddress" ],
-            type         => dsa,
-            key          => $sshdsakey,
+    if $exchange_keys {
+        @@sshkey { "${::fqdn}_dsa":
+            host_aliases => [ $::fqdn, $::hostname, $::ipaddress ],
+            type         => 'dsa',
+            key          => $::sshdsakey,
+            tag          => 'exchanged',
         }
         @@sshkey { "${fqdn}_rsa":
-            host_aliases => [ "$fqdn", "$hostname", "$ipaddress" ],
-            type         => rsa,
-            key          => $sshrsakey,
+            host_aliases => [ $::fqdn, $::hostname, $::ipaddress ],
+            type         => 'rsa',
+            key          => $::sshrsakey,
+            tag          => 'exchanged',
         }
     }
 }

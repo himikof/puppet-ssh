@@ -1,4 +1,6 @@
-class ssh ($use_exports = false) {
-    class {'ssh::server': use_exports => $use_exports;}
-    class {'ssh::client': use_exports => $use_exports;}
+class ssh (
+  $exchange_keys = false
+) {
+  class { 'ssh::server': exchange_keys => $exchange_keys}
+  class { 'ssh::client': exchange_keys => $exchange_keys}
 }
