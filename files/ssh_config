@@ -49,4 +49,5 @@ Host *
 #   ProxyCommand ssh -q -W %h:%p gateway.example.com
     SendEnv LANG LC_*
     #HashKnownHosts yes
-    UserKnownHostsFile /dev/null
+    # It is not a good idea to have this on by default
+    #UserKnownHostsFile /dev/null
