@@ -3,7 +3,7 @@
 
 # The strategy used for options in the default sshd_config shipped with
 # OpenSSH is to specify options with their default value where
-# possible, but leave them commented.  Uncommented options change a
+# possible, but leave them commented.  Uncommented options override the
 # default value.
 
 #Port 22
@@ -25,6 +25,9 @@
 #KeyRegenerationInterval 1h
 #ServerKeyBits 1024
 
+# Ciphers and keying
+#RekeyLimit default none
+
 # Logging
 # obsoletes QuietMode and FascistLogging
 #SyslogFacility AUTH
@@ -41,7 +44,15 @@ MaxStartups 10:30:50
 
 #RSAAuthentication yes
 #PubkeyAuthentication yes
+
+# The default is to check both .ssh/authorized_keys and .ssh/authorized_keys2
+# but this is overridden so installations will only check .ssh/authorized_keys
 #AuthorizedKeysFile	.ssh/authorized_keys
+
+#AuthorizedPrincipalsFile none
+
+#AuthorizedKeysCommand none
+#AuthorizedKeysCommandUser nobody
 
 # For this to work you will also need host keys in /etc/ssh/ssh_known_hosts
 #RhostsRSAAuthentication no
@@ -58,7 +69,7 @@ PasswordAuthentication <%= if password_auth then "yes" else "no" end %>
 #PermitEmptyPasswords no
 
 # Change to no to disable s/key passwords
-ChallengeResponseAuthentication no
+ChallengeResponseAuthentication yes
 
 # Kerberos options
 #KerberosAuthentication no
@@ -69,6 +80,7 @@ ChallengeResponseAuthentication no
 # GSSAPI options
 #GSSAPIAuthentication no
 #GSSAPICleanupCredentials yes
+#GSSAPIStrictAcceptorCheck yes
 
 # Set this to 'yes' to enable PAM authentication, account processing, 
 # and session processing. If this is enabled, PAM authentication will 
@@ -91,16 +103,17 @@ PrintMotd no
 PrintLastLog no
 #TCPKeepAlive yes
 #UseLogin no
-#UsePrivilegeSeparation yes
+UsePrivilegeSeparation sandbox         # Default for new installations.
 #PermitUserEnvironment no
 #Compression delayed
 #ClientAliveInterval 0
 #ClientAliveCountMax 3
 #UseDNS yes
 #PidFile /var/run/sshd.pid
-#MaxStartups 10
+#MaxStartups 10:30:100
 #PermitTunnel no
 #ChrootDirectory none
+#VersionAddendum none
 
 # no default banner path
 #Banner none
@@ -112,18 +125,22 @@ Subsystem	sftp	/usr/lib/misc/sftp-server
 # tcp receive buffer polling. disable in non autotuning kernels
 #TcpRcvBufPoll yes
  
-# allow the use of the none cipher
-#NoneEnabled no
-
-# disable hpn performance boosts. 
+# disable hpn performance boosts
 #HPNDisabled no
 
 # buffer size for hpn to non-hpn connections
 #HPNBufferSize 2048
 
 
+# allow the use of the none cipher
+#NoneEnabled no
+
 # Example of overriding settings on a per-user basis
 #Match User anoncvs
 #	X11Forwarding no
 #	AllowTcpForwarding no
 #	ForceCommand cvs server
+
+
+# Allow client to pass locale environment variables #367017
+AcceptEnv LANG LC_*
